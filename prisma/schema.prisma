@@ -1,0 +1,132 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Frequency {
+  ONE_TIME
+  BIWEEKLY
+  WEEKLY
+}
+
+enum TimeSlot {
+  MORNING
+  AFTERNOON
+  EVENING
+}
+
+enum RequestStatus {
+  NEW
+  CONFIRMED
+  SCHEDULED
+  DONE
+  CANCELLED
+}
+
+model Service {
+  id               Int               @id @default(autoincrement())
+  code             String            @unique
+  name             String
+  description      String
+  pricePerM2Cents  Int
+  minPriceCents    Int
+  minutesPerM2     Float
+  discountsAllowed Boolean
+  sortOrder        Int
+  active           Boolean           @default(true)
+  requests         CleaningRequest[]
+}
+
+model Extra {
+  id         Int     @id @default(autoincrement())
+  code       String  @unique
+  name       String
+  unit       String // 'piece' | 'hour' | 'fixed'
+  priceCents Int
+  minutes    Int
+  maxQty     Int
+  sortOrder  Int
+  active     Boolean @default(true)
+}
+
+model ServiceArea {
+  id             Int               @id @default(autoincrement())
+  code           String            @unique
+  name           String
+  region         String
+  travelFeeCents Int
+  sortOrder      Int
+  active         Boolean           @default(true)
+  requests       CleaningRequest[]
+}
+
+model FaqItem {
+  id         Int     @id @default(autoincrement())
+  code       String  @unique
+  question   String
+  answer     String
+  keywords   String
+  showAsChip Boolean
+  sortOrder  Int
+  active     Boolean @default(true)
+}
+
+model WeeklyCapacity {
+  id       Int    @id @default(autoincrement())
+  weekday  Int // 1 = Monday ... 7 = Sunday
+  slot     String
+  capacity Int
+
+  @@unique([weekday, slot])
+}
+
+model CapacityException {
+  id       Int      @id @default(autoincrement())
+  date     DateTime @db.Date
+  slot     String // MORNING | AFTERNOON | EVENING | ALL
+  capacity Int
+  note     String?
+
+  @@unique([date, slot])
+}
+
+model Setting {
+  key   String @id
+  value String
+}
+
+model CleaningRequest {
+  id               Int           @id @default(autoincrement())
+  code             String        @unique
+  serviceId        Int
+  service          Service       @relation(fields: [serviceId], references: [id])
+  areaId           Int
+  area             ServiceArea   @relation(fields: [areaId], references: [id])
+  areaM2           Int
+  rooms            Int
+  bathrooms        Int
+  frequency        Frequency     @default(ONE_TIME)
+  extras           Json          @default("[]")
+  travelFeeCents   Int
+  totalPrice       Int // whole euros
+  estimatedMinutes Int
+  preferredDate    DateTime      @db.Date
+  timeSlot         TimeSlot
+  address          String
+  name             String
+  phone            String
+  email            String
+  notes            String?
+  status           RequestStatus @default(NEW)
+  internalNote     String?
+  isSample         Boolean       @default(false)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([preferredDate, timeSlot])
+  @@index([status])
+}
