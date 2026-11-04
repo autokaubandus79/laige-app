@@ -14,6 +14,7 @@ import type { Catalog, Selection } from "@/lib/types";
 import {
   AREA_MAX,
   AREA_MIN,
+  parseAreaInput,
   trimContact,
   validateContact,
   validateSelection,
@@ -122,13 +123,14 @@ export function BookingFlow({ catalog }: { catalog: Catalog }) {
   }
 
   function handleAreaInput(value: string) {
-    const digits = value.replace(/\D/g, "").slice(0, 4);
-    setAreaInput(digits);
-    patchSelection({ areaM2: digits ? Number(digits) : 0 });
+    const { text, areaM2 } = parseAreaInput(value);
+    setAreaInput(text);
+    patchSelection({ areaM2 });
   }
 
   function handleAreaBlur() {
     const inRange = selection.areaM2 >= AREA_MIN && selection.areaM2 <= AREA_MAX;
+    if (inRange) setAreaInput(String(selection.areaM2));
     setErrors((current) => {
       const next = { ...current };
       if (inRange) delete next.areaM2;

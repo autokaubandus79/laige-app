@@ -116,7 +116,7 @@ export function StepQuote({
               <div className="flex items-center gap-2">
                 <Input
                   id="area-input"
-                  inputMode="numeric"
+                  inputMode="decimal"
                   className="w-24 text-right font-bold"
                   value={areaInput}
                   aria-invalid={Boolean(errors.areaM2)}

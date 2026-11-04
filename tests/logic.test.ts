@@ -16,7 +16,7 @@ import {
   type QuoteInput,
 } from "../lib/logic";
 import { formatCents, formatMinutes } from "../lib/format";
-import { isValidEmail, isValidPhone, parseBooking } from "../lib/validation";
+import { isValidEmail, isValidPhone, parseAreaInput, parseBooking } from "../lib/validation";
 import type { Catalog, FaqDto } from "../lib/types";
 
 const TZ = "Europe/Tallinn";
@@ -251,4 +251,15 @@ test("server parsing refuses bad values next to the right field", () => {
   assert.ok(errorsFor({ slot: "NIGHT" }).slot);
   assert.ok(errorsFor({ email: "x" }).email);
   assert.ok(errorsFor({ phone: "" }).phone);
+});
+
+test("area input keeps a decimal comma while typing and uses whole m²", () => {
+  assert.deepEqual(parseAreaInput("55,"), { text: "55,", areaM2: 55 });
+  assert.deepEqual(parseAreaInput("55,5"), { text: "55,5", areaM2: 56 });
+  assert.deepEqual(parseAreaInput("55.4"), { text: "55.4", areaM2: 55 });
+  assert.deepEqual(parseAreaInput("060"), { text: "060", areaM2: 60 });
+  assert.deepEqual(parseAreaInput("12abc"), { text: "12", areaM2: 12 });
+  assert.deepEqual(parseAreaInput("1,2,3"), { text: "1,2", areaM2: 1 });
+  assert.deepEqual(parseAreaInput(","), { text: ",", areaM2: 0 });
+  assert.deepEqual(parseAreaInput(""), { text: "", areaM2: 0 });
 });

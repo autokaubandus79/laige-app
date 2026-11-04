@@ -37,6 +37,19 @@ export function isValidPhone(value: string): boolean {
   return PHONE_PATTERN.test(value) && digits >= 7 && digits <= 15;
 }
 
+/**
+ * Keeps what the customer is typing, including a decimal comma, and gives the
+ * whole square metres the price uses: "55,5" stays as text and counts as 56.
+ */
+export function parseAreaInput(value: string): { text: string; areaM2: number } {
+  const text = value
+    .replace(/[^\d.,]/g, "")
+    .replace(/^([^.,]*[.,]\d*).*$/, "$1")
+    .slice(0, 6);
+  const parsed = Number(text.replace(",", "."));
+  return { text, areaM2: Number.isFinite(parsed) ? Math.round(parsed) : 0 };
+}
+
 function isIntegerBetween(value: unknown, min: number, max: number): value is number {
   return typeof value === "number" && Number.isInteger(value) && value >= min && value <= max;
 }
