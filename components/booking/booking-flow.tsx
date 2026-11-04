@@ -134,7 +134,7 @@ export function BookingFlow({ catalog }: { catalog: Catalog }) {
     setErrors((current) => {
       const next = { ...current };
       if (inRange) delete next.areaM2;
-      else next.areaM2 = `Sisesta pind täisarvuna vahemikus ${AREA_MIN}–${AREA_MAX} m².`;
+      else next.areaM2 = `Sisesta pind vahemikus ${AREA_MIN}–${AREA_MAX} m².`;
       return next;
     });
   }

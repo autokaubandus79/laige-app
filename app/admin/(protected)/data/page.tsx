@@ -74,7 +74,7 @@ export default async function DataPage() {
           s.name,
           formatCents(s.pricePerM2Cents),
           formatCents(s.minPriceCents),
-          s.minutesPerM2,
+          String(s.minutesPerM2).replace(".", ","),
           yesNo(s.discountsAllowed),
           yesNo(s.active),
         ])}

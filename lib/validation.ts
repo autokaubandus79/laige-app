@@ -62,7 +62,7 @@ export function validateSelection(selection: Selection, catalog: Catalog): Field
     errors.serviceCode = "Vali teenus.";
   }
   if (!isIntegerBetween(selection.areaM2, AREA_MIN, AREA_MAX)) {
-    errors.areaM2 = `Sisesta pind täisarvuna vahemikus ${AREA_MIN}–${AREA_MAX} m².`;
+    errors.areaM2 = `Sisesta pind vahemikus ${AREA_MIN}–${AREA_MAX} m².`;
   }
   if (!isIntegerBetween(selection.rooms, ROOMS_MIN, ROOMS_MAX)) {
     errors.rooms = `Tubade arv peab olema ${ROOMS_MIN}–${ROOMS_MAX}.`;
