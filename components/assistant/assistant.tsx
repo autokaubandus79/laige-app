@@ -17,11 +17,14 @@ export function Assistant({
   welcomeMessage,
   fallbackMessage,
   tips,
+  hideButton,
 }: {
   faq: FaqDto[];
   welcomeMessage: string;
   fallbackMessage: string;
   tips: Tip[];
+  /** The expanded price summary on a phone needs the corner the button sits in. */
+  hideButton: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([{ id: 0, from: "bot", text: welcomeMessage }]);
@@ -35,7 +38,7 @@ export function Assistant({
 
   useEffect(() => {
     if (open) endRef.current?.scrollIntoView({ block: "end" });
-  }, [messages, typing, tips, open]);
+  }, [messages, typing, open]);
 
   useEffect(
     () => () => {
@@ -68,7 +71,7 @@ export function Assistant({
 
   return (
     <>
-      {!open && (
+      {!open && !hideButton && (
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -117,16 +120,21 @@ export function Assistant({
               </div>
             ))}
 
-            {tips.map((tip) => (
-              <div key={tip.id} className="flex max-w-[85%] gap-2 rounded-lg bg-accent px-3 py-2 text-sm leading-relaxed">
-                <Lightbulb className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
-                <span>{tip.text}</span>
-              </div>
-            ))}
-
             {typing && <div className="w-fit rounded-lg bg-white px-3 py-2 text-sm text-muted-foreground shadow-sm">Kirjutab...</div>}
             <div ref={endRef} />
           </div>
+
+          {/* Tips follow the form, so they stay outside the conversation. */}
+          {tips.length > 0 && (
+            <div className="max-h-32 space-y-2 overflow-y-auto border-t bg-accent/60 px-3 py-2">
+              {tips.map((tip) => (
+                <p key={tip.id} className="flex gap-2 text-sm leading-relaxed">
+                  <Lightbulb className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden />
+                  <span>{tip.text}</span>
+                </p>
+              ))}
+            </div>
+          )}
 
           {chips.length > 0 && (
             <div className="flex gap-2 overflow-x-auto border-t bg-white px-3 py-2">

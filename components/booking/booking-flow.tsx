@@ -92,7 +92,11 @@ export function BookingFlow({ catalog }: { catalog: Catalog }) {
     }
   }, []);
 
+  // Only when the step changes: on first load the header must stay in view.
+  const shownStep = useRef(step);
   useEffect(() => {
+    if (shownStep.current === step) return;
+    shownStep.current = step;
     topRef.current?.scrollIntoView({ block: "start" });
   }, [step]);
 
@@ -367,6 +371,7 @@ export function BookingFlow({ catalog }: { catalog: Catalog }) {
         welcomeMessage={catalog.settings.welcomeMessage}
         fallbackMessage={catalog.settings.fallbackMessage}
         tips={tips}
+        hideButton={summaryOpen}
       />
     </div>
   );

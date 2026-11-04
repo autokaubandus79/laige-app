@@ -83,13 +83,11 @@ export function StepQuote({
                   });
                 }}
                 className={cn(
-                  "relative rounded-lg border-2 bg-white p-4 text-left shadow-sm transition-colors",
+                  "relative flex flex-col items-start justify-start rounded-lg border-2 bg-white p-4 text-left shadow-sm transition-colors",
                   selected ? "border-primary bg-accent/50" : "border-border hover:border-primary/40",
                 )}
               >
-                <span className="flex items-start justify-between gap-3 pr-7">
-                  <span className="text-base font-bold">{item.name}</span>
-                </span>
+                <span className="pr-7 text-base font-bold">{item.name}</span>
                 {selected && (
                   <span className="absolute top-3 right-3 flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground">
                     <Check className="size-4" aria-hidden />

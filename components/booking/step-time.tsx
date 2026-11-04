@@ -114,7 +114,7 @@ export function StepTime({
             {week.map((day) => (
               <div key={day.date} className={cn("rounded-lg border p-3", day.closed && "bg-muted/60")}>
                 <div className="mb-2 flex flex-wrap items-baseline justify-between gap-x-3">
-                  <p className="text-sm font-bold capitalize">
+                  <p className="text-sm font-bold first-letter:uppercase">
                     {weekdayName(day.date)}, {formatDayMonth(day.date)}
                   </p>
                   {day.note && <p className="text-sm font-medium text-muted-foreground">{day.note}</p>}
