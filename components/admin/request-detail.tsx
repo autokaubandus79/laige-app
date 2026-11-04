@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
+import { unstable_isUnrecognizedActionError } from "next/navigation";
 import { updateRequest } from "@/app/admin/actions";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -10,6 +11,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "
 import { Textarea } from "@/components/ui/textarea";
 import { FREQUENCY_LABELS, STATUS_LABELS, formatCents, formatDateLong, formatEuros, formatMinutes } from "@/lib/format";
 import { SLOT_INFO, STATUSES, type Slot, type Status } from "@/lib/logic";
+import { OUTDATED_PAGE_MESSAGE } from "@/lib/messages";
 import type { AdminRequest } from "@/lib/types";
 import { StatusBadge } from "./status-badge";
 
@@ -33,8 +35,14 @@ export function RequestDetail({ request, onClose }: { request: AdminRequest | nu
   function save() {
     if (!request) return;
     startSaving(async () => {
-      const result = await updateRequest(request.id, status, note);
-      setFeedback(result.ok ? { ok: true, text: "Salvestatud." } : { ok: false, text: result.error });
+      try {
+        const result = await updateRequest(request.id, status, note);
+        setFeedback(result.ok ? { ok: true, text: "Salvestatud." } : { ok: false, text: result.error });
+      } catch (error) {
+        // Keep the open panel and the typed note when the page predates a deploy.
+        if (!unstable_isUnrecognizedActionError(error)) throw error;
+        setFeedback({ ok: false, text: OUTDATED_PAGE_MESSAGE });
+      }
     });
   }
 

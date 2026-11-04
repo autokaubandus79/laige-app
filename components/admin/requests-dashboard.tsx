@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { Search, Trash2 } from "lucide-react";
+import { unstable_isUnrecognizedActionError } from "next/navigation";
 import { deleteSampleRequests } from "@/app/admin/actions";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -23,6 +24,7 @@ import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { STATUS_LABELS, formatDate, formatEuros } from "@/lib/format";
 import { SLOT_INFO, STATUSES, type Slot } from "@/lib/logic";
+import { OUTDATED_PAGE_MESSAGE } from "@/lib/messages";
 import type { AdminRequest } from "@/lib/types";
 import { RequestDetail } from "./request-detail";
 import { StatusBadge } from "./status-badge";
@@ -132,8 +134,13 @@ export function RequestsDashboard({ requests, weekStartIso }: { requests: AdminR
                   variant="destructive"
                   onClick={() =>
                     startDelete(async () => {
-                      const result = await deleteSampleRequests();
-                      setDeleteError(result.ok ? null : result.error);
+                      try {
+                        const result = await deleteSampleRequests();
+                        setDeleteError(result.ok ? null : result.error);
+                      } catch (error) {
+                        if (!unstable_isUnrecognizedActionError(error)) throw error;
+                        setDeleteError(OUTDATED_PAGE_MESSAGE);
+                      }
                     })
                   }
                 >
