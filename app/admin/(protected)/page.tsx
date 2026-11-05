@@ -18,6 +18,7 @@ async function loadRequests() {
   const requests: AdminRequest[] = rows.map((row) => ({
     id: row.id,
     code: row.code,
+    statusToken: row.statusToken,
     createdAtIso: row.createdAt.toISOString(),
     createdLabel: `${formatDate(dateInZone(row.createdAt, timezone))} ${timeInZone(row.createdAt, timezone)}`,
     serviceName: row.service.name,

@@ -1,57 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Check, CheckCircle2, Copy, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { CheckCircle2, Search } from "lucide-react";
+import { CopyButton } from "@/components/copy-button";
 import { Input } from "@/components/ui/input";
 import { formatDateLong, formatEuros, formatMinutes } from "@/lib/format";
 import { clearConfirmation, type SavedConfirmation } from "@/lib/saved-confirmation";
-
-async function copyText(text: string): Promise<boolean> {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch {
-    // Older browsers and some in-app browsers have no clipboard API.
-    const field = document.createElement("textarea");
-    field.value = text;
-    field.style.position = "fixed";
-    field.style.opacity = "0";
-    document.body.append(field);
-    field.select();
-    const copied = document.execCommand("copy");
-    field.remove();
-    return copied;
-  }
-}
-
-function CopyButton({ text, label }: { text: string; label: string }) {
-  const [result, setResult] = useState<"idle" | "copied" | "failed">("idle");
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(
-    () => () => {
-      if (timer.current) clearTimeout(timer.current);
-    },
-    [],
-  );
-
-  async function handleCopy() {
-    setResult((await copyText(text)) ? "copied" : "failed");
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setResult("idle"), 2500);
-  }
-
-  return (
-    <Button type="button" variant="outline" size="lg" className="w-full" onClick={handleCopy}>
-      {result === "copied" ? <Check className="size-5" aria-hidden /> : <Copy className="size-5" aria-hidden />}
-      <span aria-live="polite">
-        {result === "copied" ? "Kopeeritud" : result === "failed" ? "Ei õnnestunud, kopeeri käsitsi" : label}
-      </span>
-    </Button>
-  );
-}
 
 export function Confirmation({
   created,

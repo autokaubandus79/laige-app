@@ -76,6 +76,7 @@ export type RequestExtra = {
 export type AdminRequest = {
   id: number;
   code: string;
+  statusToken: string;
   createdLabel: string;
   createdAtIso: string;
   serviceName: string;

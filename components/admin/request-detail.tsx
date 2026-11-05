@@ -4,7 +4,9 @@ import { useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
 import { unstable_isUnrecognizedActionError } from "next/navigation";
 import { updateRequest } from "@/app/admin/actions";
+import { CopyButton } from "@/components/copy-button";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -31,6 +33,8 @@ export function RequestDetail({ request, onClose }: { request: AdminRequest | nu
   const [saving, startSaving] = useTransition();
 
   if (!request) return null;
+
+  const statusLink = `${window.location.origin}/status/${request.statusToken}`;
 
   function save() {
     if (!request) return;
@@ -92,6 +96,21 @@ export function RequestDetail({ request, onClose }: { request: AdminRequest | nu
               <p className="mt-1 text-sm whitespace-pre-wrap">{request.notes}</p>
             </div>
           )}
+
+          <div className="space-y-2 border-t pt-4">
+            <p className="text-sm font-semibold">Kliendi staatuse link</p>
+            <p className="text-sm text-muted-foreground">
+              Saada see kliendile. Lingiga näeb päringu seisu ilma koodi ja e-postita.
+            </p>
+            <Input
+              readOnly
+              value={statusLink}
+              aria-label="Kliendi staatuse link"
+              className="text-sm"
+              onFocus={(event) => event.target.select()}
+            />
+            <CopyButton text={statusLink} label="Kopeeri link" />
+          </div>
 
           <div className="space-y-4 border-t pt-4">
             <div className="space-y-1.5">
