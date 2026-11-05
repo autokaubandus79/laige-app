@@ -64,6 +64,18 @@ export function Assistant({
     return () => clearTimeout(greeting);
   }, []);
 
+  // Over a phone's form the greeting steps aside as soon as the customer starts using it.
+  useEffect(() => {
+    if (!showBubble || !raised || !window.matchMedia("(max-width: 1023px)").matches) return;
+    const hide = () => setShowBubble(false);
+    window.addEventListener("scroll", hide, { passive: true, once: true });
+    window.addEventListener("pointerdown", hide, { once: true });
+    return () => {
+      window.removeEventListener("scroll", hide);
+      window.removeEventListener("pointerdown", hide);
+    };
+  }, [showBubble, raised]);
+
   useEffect(() => {
     if (open) endRef.current?.scrollIntoView({ block: "end" });
   }, [messages, typing, open]);
