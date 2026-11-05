@@ -128,3 +128,20 @@
     @apply font-sans;
   }
 }
+
+/* Anna's button until the chat is opened. No pulse with reduced motion. */
+@keyframes anna-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgb(15 118 110 / 0.45);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 14px rgb(15 118 110 / 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .anna-pulse {
+    animation: anna-pulse 2.4s ease-out infinite;
+  }
+}

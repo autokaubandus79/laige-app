@@ -37,8 +37,6 @@ export type FaqDto = {
 export type CatalogSettings = PriceSettings & {
   vatIncluded: boolean;
   areaNotListedMessage: string;
-  welcomeMessage: string;
-  fallbackMessage: string;
   bookingDaysAhead: number;
   minHoursBefore: number;
   timezone: string;
@@ -48,8 +46,13 @@ export type Catalog = {
   services: ServiceDto[];
   extras: ExtraDto[];
   areas: AreaDto[];
-  faq: FaqDto[];
   settings: CatalogSettings;
+};
+
+export type AssistantData = {
+  faq: FaqDto[];
+  welcomeMessage: string;
+  fallbackMessage: string;
 };
 
 /** What the customer picked in the calculator. */

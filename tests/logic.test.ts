@@ -189,13 +189,10 @@ const catalog: Catalog = {
     { code: "WINDOW", name: "Aken", unit: "piece", priceCents: 600, minutes: 15, maxQty: 30 },
   ],
   areas: [{ code: "KESKLINN", name: "Kesklinn", region: "Tallinn", travelFeeCents: 0 }],
-  faq: [],
   settings: {
     ...settings,
     vatIncluded: true,
     areaNotListedMessage: "",
-    welcomeMessage: "",
-    fallbackMessage: "",
     bookingDaysAhead: 60,
     minHoursBefore: 24,
     timezone: TZ,

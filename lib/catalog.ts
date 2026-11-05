@@ -1,5 +1,5 @@
 import { prisma } from "./db";
-import type { Catalog, CatalogSettings } from "./types";
+import type { AssistantData, Catalog, CatalogSettings } from "./types";
 
 export { DB_ERROR_MESSAGE } from "./messages";
 
@@ -16,8 +16,6 @@ export function parseSettings(map: Map<string, string>): CatalogSettings {
     weeklyDiscountPercent: number("weekly_discount_percent"),
     vatIncluded: map.get("vat_included")?.trim().toLowerCase() === "yes",
     areaNotListedMessage: map.get("area_not_listed_message") ?? "",
-    welcomeMessage: map.get("welcome_message") ?? "",
-    fallbackMessage: map.get("fallback_message") ?? "",
     bookingDaysAhead: number("booking_days_ahead"),
     minHoursBefore: number("min_hours_before"),
     timezone: map.get("timezone") ?? "Europe/Tallinn",
@@ -28,11 +26,10 @@ export function parseSettings(map: Map<string, string>): CatalogSettings {
 export async function getCatalog(): Promise<Catalog> {
   const where = { active: true };
   const orderBy = { sortOrder: "asc" } as const;
-  const [services, extras, areas, faq, settings] = await Promise.all([
+  const [services, extras, areas, settings] = await Promise.all([
     prisma.service.findMany({ where, orderBy }),
     prisma.extra.findMany({ where, orderBy }),
     prisma.serviceArea.findMany({ where, orderBy }),
-    prisma.faqItem.findMany({ where, orderBy }),
     getSettingsMap(),
   ]);
   return {
@@ -54,7 +51,19 @@ export async function getCatalog(): Promise<Catalog> {
       maxQty,
     })),
     areas: areas.map(({ code, name, region, travelFeeCents }) => ({ code, name, region, travelFeeCents })),
-    faq: faq.map(({ code, question, answer, keywords, showAsChip }) => ({ code, question, answer, keywords, showAsChip })),
     settings: parseSettings(settings),
+  };
+}
+
+/** What Anna needs on every customer page. */
+export async function getAssistantData(): Promise<AssistantData> {
+  const [faq, settings] = await Promise.all([
+    prisma.faqItem.findMany({ where: { active: true }, orderBy: { sortOrder: "asc" } }),
+    getSettingsMap(),
+  ]);
+  return {
+    faq: faq.map(({ code, question, answer, keywords, showAsChip }) => ({ code, question, answer, keywords, showAsChip })),
+    welcomeMessage: settings.get("welcome_message") ?? "",
+    fallbackMessage: settings.get("fallback_message") ?? "",
   };
 }

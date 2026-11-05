@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, ChevronUp, Loader2 } from "lucide-react";
-import { Assistant } from "@/components/assistant/assistant";
+import { useAssistantPageState } from "@/components/assistant/assistant-shell";
 import { Button } from "@/components/ui/button";
 import { contextTips } from "@/lib/assistant";
 import { formatDateLong, formatEuros } from "@/lib/format";
@@ -76,7 +76,12 @@ export function BookingFlow({ catalog }: { catalog: Catalog }) {
     () => (areaIsValid ? quoteForSelection(catalog, selection) : null),
     [areaIsValid, catalog, selection],
   );
-  const tips = useMemo(() => contextTips(catalog, selection, quote), [catalog, selection, quote]);
+  const confirmation = created ?? savedConfirmation;
+  const tips = useMemo(
+    () => (confirmation ? [] : contextTips(catalog, selection, quote)),
+    [catalog, confirmation, selection, quote],
+  );
+  useAssistantPageState({ tips, raised: !confirmation, hidden: summaryOpen });
 
   const loadDays = useCallback(async () => {
     setDaysLoading(true);
@@ -215,7 +220,6 @@ export function BookingFlow({ catalog }: { catalog: Catalog }) {
   }
 
   // It stays through reloads and visits to other pages until "Uus päring".
-  const confirmation = created ?? savedConfirmation;
   if (confirmation) {
     return <Confirmation created={confirmation} vatIncluded={catalog.settings.vatIncluded} />;
   }
@@ -372,14 +376,6 @@ export function BookingFlow({ catalog }: { catalog: Catalog }) {
           )}
         </div>
       </div>
-
-      <Assistant
-        faq={catalog.faq}
-        welcomeMessage={catalog.settings.welcomeMessage}
-        fallbackMessage={catalog.settings.fallbackMessage}
-        tips={tips}
-        hideButton={summaryOpen}
-      />
     </div>
   );
 }
