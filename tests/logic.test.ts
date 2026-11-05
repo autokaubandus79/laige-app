@@ -16,7 +16,7 @@ import {
   type QuoteInput,
 } from "../lib/logic";
 import { formatCents, formatMinutes } from "../lib/format";
-import { isValidEmail, isValidPhone, parseAreaInput, parseBooking } from "../lib/validation";
+import { isValidEmail, isValidPhone, isValidStatusToken, parseAreaInput, parseBooking } from "../lib/validation";
 import type { Catalog, FaqDto } from "../lib/types";
 
 const TZ = "Europe/Tallinn";
@@ -262,4 +262,12 @@ test("area input keeps a decimal comma while typing and uses whole m²", () => {
   assert.deepEqual(parseAreaInput("1,2,3"), { text: "1,2", areaM2: 1 });
   assert.deepEqual(parseAreaInput(","), { text: ",", areaM2: 0 });
   assert.deepEqual(parseAreaInput(""), { text: "", areaM2: 0 });
+});
+
+test("status token format", () => {
+  assert.equal(isValidStatusToken("0123456789abcdef0123456789abcdef"), true);
+  assert.equal(isValidStatusToken("0123456789ABCDEF0123456789ABCDEF"), false);
+  assert.equal(isValidStatusToken("0123456789abcdef"), false);
+  assert.equal(isValidStatusToken("LG-1021"), false);
+  assert.equal(isValidStatusToken(""), false);
 });

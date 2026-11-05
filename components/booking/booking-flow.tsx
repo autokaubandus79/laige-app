@@ -10,6 +10,7 @@ import type { DayAvailability } from "@/lib/logic";
 import { DB_ERROR_MESSAGE } from "@/lib/messages";
 import { quoteForSelection } from "@/lib/quote";
 import type { CreatedRequest } from "@/lib/requests";
+import { saveConfirmation, useSavedConfirmation } from "@/lib/saved-confirmation";
 import type { Catalog, Selection } from "@/lib/types";
 import {
   AREA_MAX,
@@ -65,6 +66,7 @@ export function BookingFlow({ catalog }: { catalog: Catalog }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [created, setCreated] = useState<CreatedRequest | null>(null);
+  const savedConfirmation = useSavedConfirmation();
   const [summaryOpen, setSummaryOpen] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
 
@@ -158,6 +160,7 @@ export function BookingFlow({ catalog }: { catalog: Catalog }) {
 
       if (response.status === 201) {
         setCreated(data);
+        saveConfirmation(data);
         window.scrollTo({ top: 0 });
       } else if (response.status === 409) {
         setChosen(null);
@@ -211,8 +214,10 @@ export function BookingFlow({ catalog }: { catalog: Catalog }) {
     setStep((current) => (current === 3 ? 2 : 1));
   }
 
-  if (created) {
-    return <Confirmation created={created} vatIncluded={catalog.settings.vatIncluded} />;
+  // It stays through reloads and visits to other pages until "Uus päring".
+  const confirmation = created ?? savedConfirmation;
+  if (confirmation) {
+    return <Confirmation created={confirmation} vatIncluded={catalog.settings.vatIncluded} />;
   }
 
   const actions = (

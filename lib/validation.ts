@@ -50,6 +50,10 @@ export function parseAreaInput(value: string): { text: string; areaM2: number } 
   return { text, areaM2: Number.isFinite(parsed) ? Math.round(parsed) : 0 };
 }
 
+export function isValidStatusToken(value: string): boolean {
+  return /^[0-9a-f]{32}$/.test(value);
+}
+
 function isIntegerBetween(value: unknown, min: number, max: number): value is number {
   return typeof value === "number" && Number.isInteger(value) && value >= min && value <= max;
 }

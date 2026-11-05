@@ -102,6 +102,8 @@ model Setting {
 model CleaningRequest {
   id               Int           @id @default(autoincrement())
   code             String        @unique
+  /// Random secret in the customer's personal status link. Postgres generates it.
+  statusToken      String        @unique @default(dbgenerated("replace(gen_random_uuid()::text, '-', '')"))
   serviceId        Int
   service          Service       @relation(fields: [serviceId], references: [id])
   areaId           Int

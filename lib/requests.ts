@@ -62,7 +62,8 @@ export async function createRequest(booking: BookingData, catalog: Catalog, now 
         tx.serviceArea.findUniqueOrThrow({ where: { code: area.code }, select: { id: true } }),
       ]);
 
-      await tx.cleaningRequest.create({
+      const { statusToken } = await tx.cleaningRequest.create({
+        select: { statusToken: true },
         data: {
           code,
           serviceId: dbService.id,
@@ -87,6 +88,7 @@ export async function createRequest(booking: BookingData, catalog: Catalog, now 
 
       return {
         code,
+        statusToken,
         serviceName: service.name,
         areaName: area.name,
         areaM2: booking.areaM2,
