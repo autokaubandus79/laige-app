@@ -25,7 +25,7 @@ export function SiteFooter() {
   return (
     <footer className="border-t bg-white">
       <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 pb-28 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between lg:pb-6">
-        <span>© Läige kodukoristus</span>
+        <span>© 2026 Läige. Built with Claude Code</span>
         <div className="flex flex-wrap gap-x-6 gap-y-2">
           <a href="tel:+37255550000" className="inline-flex items-center gap-2 hover:text-primary">
             <Phone className="size-4" aria-hidden />
